@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Container, Table, TableBody, TableCell, TableHead, TableRow, Paper, Modal, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Container, Table, TableBody, TableCell, TableHead, TableRow, Modal, Box } from "@mui/material";
+import AssetSummaryPanel from "../ui/dashboard/summary-panel";
 
 const Dashboard = () => {
   const [walletConnected, setWalletConnected] = useState(false);
@@ -29,13 +30,13 @@ const Dashboard = () => {
           <Typography variant="h6" style={{ flexGrow: 1 }}>
             Network
           </Typography>
-          <Button color="inherit" onClick={handleConnectWallet}>
+          <Button  variant="contained" color="success" onClick={handleConnectWallet}>
             {walletConnected ? "Wallet Connected" : "Connect Wallet"}
           </Button>
         </Toolbar>
       </AppBar>
       <Container style={{ marginTop: "2rem" }}>
-        <Box>
+        {/* <Box>
             <Typography variant="h5" gutterBottom>
               Your Portfolio
             </Typography>
@@ -44,7 +45,9 @@ const Dashboard = () => {
                 {walletConnected ? "2 ETH ($3600), 1000 USDT ($1000)" : "Connect your wallet to see your portfolio."}
               </Typography>
             </Paper>
-        </Box>
+        </Box> */}
+
+        <AssetSummaryPanel />
         <Typography variant="h5" gutterBottom>
           Yield Opportunities
         </Typography>
