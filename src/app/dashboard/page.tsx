@@ -1,16 +1,46 @@
-'use client'
+"use client";
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Container, Table, TableBody, TableCell, TableHead, TableRow, Modal, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Modal,
+  Box,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import AssetSummaryPanel from "../ui/dashboard/summary-panel";
+import { useAppKit } from "@reown/appkit/react";
+import { useAccount, useDisconnect } from "wagmi";
 
 const Dashboard = () => {
-  const [walletConnected, setWalletConnected] = useState(false);
+  const { open } = useAppKit();
+  const { isConnected, address } = useAccount();
+  const { disconnect } = useDisconnect();
   const [modalOpen, setModalOpen] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleConnectWallet = () => {
-    // Mock wallet connection logic
-    setWalletConnected(true);
+  const truncateAddress = (addr?: string) => {
+    if (!addr) return "";
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
+
+  const handleWalletClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (isConnected) {
+      setMenuAnchorEl(event.currentTarget);
+    } else {
+      open();
+    }
+  };
+
+  const handleMenuClose = () => setMenuAnchorEl(null);
 
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
@@ -21,7 +51,9 @@ const Dashboard = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: "#121212", minHeight: "100vh", color: "#fff" }}>
+    <div
+      style={{ backgroundColor: "#121212", minHeight: "100vh", color: "#fff" }}
+    >
       <AppBar position="static" style={{ backgroundColor: "#1C1C1C" }}>
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
@@ -30,23 +62,46 @@ const Dashboard = () => {
           <Typography variant="h6" style={{ flexGrow: 1 }}>
             Network
           </Typography>
-          <Button  variant="contained" color="success" onClick={handleConnectWallet}>
-            {walletConnected ? "Wallet Connected" : "Connect Wallet"}
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleWalletClick}
+          >
+            {isConnected ? (
+              <span
+                style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+              >
+                {truncateAddress(address)}
+                <span aria-hidden style={{ fontSize: 14, opacity: 0.9 }}>
+                  ▾
+                </span>
+              </span>
+            ) : (
+              "Connect Wallet"
+            )}
           </Button>
+          <Menu
+            anchorEl={menuAnchorEl}
+            open={Boolean(menuAnchorEl)}
+            onClose={handleMenuClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            keepMounted
+          >
+            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                disconnect();
+              }}
+              sx={{ color: "#ff5252" }}
+            >
+              Disconnect
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <Container style={{ marginTop: "2rem" }}>
-        {/* <Box>
-            <Typography variant="h5" gutterBottom>
-              Your Portfolio
-            </Typography>
-            <Paper style={{ padding: "1rem", marginBottom: "2rem", backgroundColor: "#fff" }}>
-              <Typography variant="body1">
-                {walletConnected ? "2 ETH ($3600), 1000 USDT ($1000)" : "Connect your wallet to see your portfolio."}
-              </Typography>
-            </Paper>
-        </Box> */}
-
         <AssetSummaryPanel />
         <Typography variant="h5" gutterBottom>
           Yield Opportunities
@@ -67,7 +122,11 @@ const Dashboard = () => {
                 <TableCell style={{ color: "#fff" }}>{row.apy}</TableCell>
                 <TableCell style={{ color: "#fff" }}>{row.chain}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="success" onClick={handleOpenModal}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleOpenModal}
+                  >
                     Invest
                   </Button>
                 </TableCell>
@@ -97,7 +156,12 @@ const Dashboard = () => {
           <Typography variant="body1" gutterBottom>
             Enter the amount you want to invest in Aave.
           </Typography>
-          <Button variant="contained" color="primary" fullWidth onClick={handleCloseModal}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleCloseModal}
+          >
             Confirm Investment
           </Button>
         </Box>
