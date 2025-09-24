@@ -12,10 +12,15 @@
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@mui/material": "^6.1.8",
+    "@reown/appkit": "^1.5.2",
+    "@reown/appkit-adapter-wagmi": "^1.5.2",
+    "@tanstack/react-query": "^5.61.5",
     "ethers": "^6.13.4",
     "next": "15.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "viem": "^2.21.52",
+    "wagmi": "^2.13.2",
     "web3modal": "^1.9.12"
   },
   "devDependencies": {
